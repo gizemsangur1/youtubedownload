@@ -1,0 +1,135 @@
+name: Build Releases
+
+on:
+  push:
+    tags:
+      - 'v*'        # Triggers on version tags like v1.0.0
+  workflow_dispatch: # Also allows manual trigger from GitHub UI
+
+jobs:
+  # ─────────────────────────────────────────
+  # BUILD WINDOWS .EXE
+  # ─────────────────────────────────────────
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install pyinstaller yt-dlp
+
+      - name: Download FFmpeg for Windows
+        run: |
+          curl -L "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip" -o ffmpeg.zip
+          Expand-Archive -Path ffmpeg.zip -DestinationPath ffmpeg_extracted
+          # Find ffmpeg.exe inside extracted folder and copy to project root
+          Get-ChildItem -Path ffmpeg_extracted -Recurse -Filter "ffmpeg.exe" | Copy-Item -Destination "ffmpeg.exe"
+
+      - name: Build Windows EXE with bundled FFmpeg
+        run: |
+          pyinstaller --onefile `
+            --name "yt-playlist-downloader-windows" `
+            --add-binary "ffmpeg.exe;." `
+            downloader.py
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: dist/yt-playlist-downloader-windows.exe
+
+  # ─────────────────────────────────────────
+  # BUILD LINUX BINARY
+  # ─────────────────────────────────────────
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install pyinstaller yt-dlp
+
+      - name: Download FFmpeg for Linux
+        run: |
+          curl -L "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz" -o ffmpeg.tar.xz
+          tar -xf ffmpeg.tar.xz
+          # Find and copy ffmpeg binary to project root
+          find . -name "ffmpeg" -not -path "./dist/*" | head -1 | xargs -I{} cp {} ./ffmpeg
+          chmod +x ./ffmpeg
+
+      - name: Build Linux binary with bundled FFmpeg
+        run: |
+          pyinstaller --onefile \
+            --name "yt-playlist-downloader-linux" \
+            --add-binary "ffmpeg:." \
+            downloader.py
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binary
+          path: dist/yt-playlist-downloader-linux
+
+  # ─────────────────────────────────────────
+  # CREATE GITHUB RELEASE
+  # ─────────────────────────────────────────
+  create-release:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+    # Only create release when triggered by a version tag
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-exe
+          path: ./artifacts
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-binary
+          path: ./artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/yt-playlist-downloader-windows.exe
+            artifacts/yt-playlist-downloader-linux
+          body: |
+            ## 🎵 YouTube Playlist to MP3 Downloader ${{ github.ref_name }}
+
+            ### Downloads
+            | Platform | File |
+            |----------|------|
+            | 🪟 Windows | `yt-playlist-downloader-windows.exe` |
+            | 🐧 Linux   | `yt-playlist-downloader-linux` |
+
+            ### ✅ No additional installation needed
+            FFmpeg is bundled inside — just download and run!
+
+            ### Usage (Linux)
+            ```bash
+            chmod +x yt-playlist-downloader-linux
+            ./yt-playlist-downloader-linux
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
