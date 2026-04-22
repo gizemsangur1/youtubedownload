@@ -1,4 +1,6 @@
-# YouTube Playlist to MP3 Downloader
+#  YouTube Playlist to MP3 Downloader
+
+# FREE PALESTINE
 
 A simple and efficient command-line tool to download entire YouTube playlists as high-quality MP3 files.
 
@@ -6,14 +8,12 @@ A simple and efficient command-line tool to download entire YouTube playlists as
 
 ---
 
-## ⬇ Download
-
-<!-- Replace YOUR_USERNAME and YOUR_REPO with your GitHub info -->
+##  Download
 
 | Platform | Download |
 |----------|----------|
-|  Windows | [![Windows](https://img.shields.io/badge/Download-Windows%20.exe-0078D6?style=for-the-badge&logo=windows)](https://github.com/https://github.com/gizemsangur1/youtubedownload.git/releases/latest/download/yt-playlist-downloader-windows.exe) |
-|  Linux | [![Linux](https://img.shields.io/badge/Download-Linux%20Binary-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/gizemsangur1/youtubedownload.git/releases/latest/download/yt-playlist-downloader-linux) |
+|  Windows | [![Windows](https://img.shields.io/badge/Download-Windows%20.exe-0078D6?style=for-the-badge&logo=windows)](https://github.com/gizemsangur1/youtubedownload/releases/latest/download/yt-playlist-downloader-windows.exe) |
+|  Linux | [![Linux](https://img.shields.io/badge/Download-Linux%20Binary-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/gizemsangur1/youtubedownload/releases/latest/download/yt-playlist-downloader-linux) |
 
 ---
 
@@ -41,7 +41,7 @@ A simple and efficient command-line tool to download entire YouTube playlists as
 
 ```bash
 # Download
-wget https://github.com/https://github.com/gizemsangur1/youtubedownload.git/releases/latest/download/yt-playlist-downloader-linux
+wget https://github.com/gizemsangur1/youtubedownload/releases/latest/download/yt-playlist-downloader-linux
 
 # Make executable
 chmod +x yt-playlist-downloader-linux
@@ -63,7 +63,7 @@ chmod +x yt-playlist-downloader-linux
 ### Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/youtubedownload.git
+git clone https://github.com/gizemsangur1/youtubedownload.git
 cd youtubedownload
 pip install yt-dlp
 python downloader.py
@@ -71,7 +71,7 @@ python downloader.py
 
 ---
 
-## Example Session
+##  Example Session
 
 ```
 ============================================================
@@ -104,7 +104,7 @@ python downloader.py
 
 ---
 
-## Output
+##  Output
 
 ```
 downloads/
@@ -115,7 +115,7 @@ downloads/
 
 ---
 
-## Configuration
+##  Configuration
 
 Edit these values in `downloader.py`:
 
@@ -132,20 +132,20 @@ Edit these values in `downloader.py`:
 Builds are automated via GitHub Actions. To trigger a new release:
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
 GitHub Actions will automatically build both Windows `.exe` and Linux binary with bundled FFmpeg, then publish them as a GitHub Release.
 
 ---
 
-## Troubleshooting
+##  Troubleshooting
 
 **Download fails for some videos**  
 Some videos may be region-locked, age-restricted, or private. The script skips these automatically.
 
-**Permission denied on Linux**  
+**Permission denied on Linux**
 ```bash
 chmod +x yt-playlist-downloader-linux
 ```
@@ -154,7 +154,6 @@ chmod +x yt-playlist-downloader-linux
 PyInstaller-built executables sometimes trigger false positives. The source code is fully open — you can inspect it and build it yourself.
 
 ---
-
 
 ## Disclaimer
 
